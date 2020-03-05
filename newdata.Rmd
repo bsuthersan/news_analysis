@@ -1,0 +1,64 @@
+---
+title: "Part 1: Demographics"
+output: html_notebook
+---
+
+```{r, echo=FALSE}
+library(tidyverse)
+fulldata <- fulldata %>%
+  mutate(Age = as.numeric(Age))
+```
+
+The sample was slightly skewed female, with `r round(length(which(fulldata$Gender=="Female"))/length(fulldata$Gender)*100,1)`% of the sample (n = `r length(which(fulldata$Gender=="Female"))`) female.
+
+Ages of participants in the sample ranged from `r min(fulldata$Age, na.rm=T)` to `r max(fulldata$Age, na.rm=T)`. The average age was `r round(mean(fulldata$Age, na.rm=T),1)`, and the median was `r round(median(fulldata$Age, na.rm=T))`. The histogram below shows the breakdown of age.
+
+```{r}
+fulldata %>%
+  ggplot(aes(Age)) +
+  geom_histogram(binwidth = .8)
+```
+
+##Reigon
+
+Regionally, the sample was diverse, drawn from a number of areas across the UK. 
+
+```{r}
+
+```
+
+##Class and income
+
+The UK has something called a social grade which is used to classify social class. 
+
+```{r}
+fulldata %>%
+  filter(!is.na(`Social Grade`)) %>%
+  filter(`Social Grade`!="(Refused)") %>%
+  count(`Social Grade`) %>%
+  ggplot(aes(reorder(`Social Grade`, n), n)) +
+  geom_bar(stat='identity') +
+  coord_flip()
+```
+
+Data was also collected on the average household income of the individiual, as shown in the graph below.
+
+```{r}
+fulldata %>%
+  filter(Annual_household_income!="WEEKLY INCOME FIGURE") %>%
+  ggplot(aes(Annual_household_income)) +
+  geom_bar(stat='count') +
+  coord_flip()
+```
+
+```{r}
+typical_frequency %>%
+  filter(Source==" The Daily Mail") %>%
+  count(Source)
+  left_join(select(fulldata, ID, `I am satisfied with my life`), by = "ID") %>%
+  ggplot(aes(Frequency, `I am satisfied with my life`)) +
+  geom_bar(stat='summary',fun.y = 'mean') +
+  coord_flip()
+```
+
+
